@@ -4,31 +4,21 @@ import java.util.LinkedList;
 import java.util.Random;
 
 /**
- * Codes with minor comments are from
- * <a href="http://www.caveofprogramming.com/youtube/">
- * <em>http://www.caveofprogramming.com/youtube/</em>
- * </a>
- * <br>
- * also freely available at
- * <a href="https://www.udemy.com/java-multithreading/?couponCode=FREE">
- * <em>https://www.udemy.com/java-multithreading/?couponCode=FREE</em>
- * </a>
- *
- * @author Z.B. Celik <celik.berkay@gmail.com>
+ * Created a low-level version of BlockingQueue.
  */
 @SuppressWarnings("InfiniteLoopStatement")
 public class Processor {
 
     private LinkedList<Integer> list = new LinkedList<>();
     private final int LIMIT = 10;
-    private final Object lock = new Object();
+    private final Object lock = new Object();   
 
     public void produce() throws InterruptedException {
         int value = 0;
         while (true) {
             synchronized (lock) {
                 //whenever the thread is notified starts again from the loop
-                while (list.size() == LIMIT) {
+                while (list.size() == LIMIT) {      // same effect as [BlockingQueue]
                     lock.wait();// wait() is also true
                 }
                 list.add(value);
@@ -48,7 +38,7 @@ public class Processor {
                     lock.wait();
                 }
 
-                int value = list.removeFirst();
+                int value = list.removeFirst(); // remove first and then add on last -> queue
                 System.out.print("Removed value by consumer is: " + value);
                 System.out.println(" Now list size is: " + list.size());
                 lock.notify();
