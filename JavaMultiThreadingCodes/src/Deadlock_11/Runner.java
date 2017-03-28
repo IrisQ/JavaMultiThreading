@@ -42,11 +42,11 @@ public class Runner {
                  * it's unavailable wait for the specified timer to expire
                  * before giving up
                  */
-                gotFirstLock = firstLock.tryLock();
+                gotFirstLock = firstLock.tryLock(); 
                 gotSecondLock = secondLock.tryLock();
             } finally {
                 if (gotFirstLock && gotSecondLock) return;
-                else if (gotFirstLock) firstLock.unlock();
+                else if (gotFirstLock) firstLock.unlock();  // give other threads a chance to get all locks
                 else if (gotSecondLock) secondLock.unlock();
             }
             // Locks not acquired
