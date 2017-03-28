@@ -51,9 +51,9 @@ public class Runner {
 
     private int count = 0;
     private Lock lock = new ReentrantLock();
-    private Condition cond = lock.newCondition();
+    private Condition cond = lock.newCondition();   // get Condition object from Lock
 
-    private void increment() {
+    private void increment() {              
         for (int i = 0; i < 10000; i++) {
             count++;
         }
@@ -62,22 +62,22 @@ public class Runner {
     public void firstThread() throws InterruptedException {
         lock.lock();
         System.out.println("Waiting ....");
-        cond.await();
+        cond.await();           // does same as wait(), this thread will be waiting, until another thread calls signal()
         System.out.println("Woken up!");
         try {
-            increment();
-        } finally {
+            increment();        // if increment() thows an exception, will never call unlock()
+        } finally {             // so should use finally, garantee unlock always be called
             lock.unlock();
         }
     }
 
     public void secondThread() throws InterruptedException {
         Thread.sleep(1000);
-        lock.lock();
+        lock.lock();            
         System.out.println("Press the return key!");
         new Scanner(System.in).nextLine();
         System.out.println("Got return key!");
-        cond.signal();
+        cond.signal();          // notify all waiting threads, another thread wake up.
         try {
             increment();
         } finally {
